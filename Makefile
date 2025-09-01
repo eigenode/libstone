@@ -1,16 +1,23 @@
 # Project settings
 LIB_NAME = libstone
 CC = gcc
-CFLAGS = -Wall -Wextra -O2 -Iinclude
+CFLAGS = -Wall -Wextra -O2 -I$(LIB_NAME)/include
 AR = ar
 ARFLAGS = rcs
 
-SRC = $(wildcard src/*.c)
+# Source files
+SRC = $(wildcard $(LIB_NAME)/src/*.c)
 OBJ = $(SRC:.c=.o)
-TEST_SRC = $(wildcard tests/*.c)
-TEST_OBJ = $(TEST_SRC:.c=.o)
-EXAMPLES = $(wildcard examples/*.c)
 
+# Test files
+TEST_SRC = $(wildcard $(LIB_NAME)/tests/*.c)
+TEST_OBJ = $(TEST_SRC:.c=.o)
+
+# Example programs
+EXAMPLES_SRC = $(wildcard $(LIB_NAME)/examples/*.c)
+EXAMPLES_BIN = $(EXAMPLES_SRC:.c=)
+
+# Doxygen
 DOXYGEN = doxygen
 DOXYFILE = Doxyfile
 
@@ -22,12 +29,18 @@ $(LIB_NAME).a: $(OBJ)
 	$(AR) $(ARFLAGS) $@ $^
 
 # Build example programs
-examples: $(EXAMPLES:.c=)
+examples: $(EXAMPLES_BIN)
+
 %: %.c $(LIB_NAME).a
 	$(CC) $(CFLAGS) $< -L. -lstone -o $@
 
+# Compile object files
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
 # Run tests
 test: $(TEST_OBJ) $(LIB_NAME).a
+	echo "Test files are: ${TEST_OBJ}"
 	$(CC) $(CFLAGS) $(TEST_OBJ) -L. -lstone -o test_runner
 	./test_runner
 
