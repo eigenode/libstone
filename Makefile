@@ -32,7 +32,7 @@ $(LIB_NAME).a: $(OBJ)
 examples: $(EXAMPLES_BIN)
 
 %: %.c $(LIB_NAME).a
-	$(CC) $(CFLAGS) $< -L. -lstone -o $@
+	$(CC) $(CFLAGS) $< -L. -lstone -o $@.out
 
 # Compile object files
 %.o: %.c
@@ -50,7 +50,7 @@ docs:
 
 # Clean build files
 clean:
-	rm -f src/*.o tests/*.o examples/* test_runner $(LIB_NAME).a
+	rm -f ${LIB_NAME}/src/*.o ${LIB_NAME}/tests/*.o ${LIB_NAME}/examples/*.out test_runner $(LIB_NAME).a
 	rm -rf docs/html
 
 .PHONY: all clean test examples docs
